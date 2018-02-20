@@ -1,0 +1,52 @@
+#!/usr/bin/python
+import random
+from random import choice
+from random import shuffle
+import string
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser(description='A tool to generate random passwords using the xkcdpwgen method.')
+    parser.add_argument( "-w", "--words", default=4, type=int, help="Specifies the number of words to be used")
+    parser.add_argument( "-c", "--caps", default=0, type=int, help="Capitalize the first letter of CAPS random words")
+    parser.add_argument( "-n", "--numbers", default=0, type=int, help="Insert NUMBERS random numbers in the password")
+    parser.add_argument( "-s", "--symbols", default=0, type=int, help="Insert SYMBOLS random symbols in the password")
+    args = parser.parse_args()
+
+    passwordString = "";
+    words = []
+
+    for line in open('google-10000-english-no-swears.txt'):
+        words.append(line.strip())
+
+    # generating the password
+    words = random.sample(words, args.words)
+
+    # capitalizing the first letter of CAPS random words
+    caps = []
+    if args.caps > 0:
+        caps = random.sample(words, args.caps)
+        for w in caps:
+            words.remove(w)
+        caps = [w.capitalize() for w in caps]
+
+
+    # inserting random numbers into the password
+    num = []
+    numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+    if args.numbers > 0:
+           num = [random.choice(numbers) for _ in range(args.numbers)]
+
+    # inserting random symbols into the password
+    sym = []
+    if args.symbols > 0:
+        sym = [random.choice(string.punctuation) for _ in range(args.symbols)]
+    
+    merge = caps + words + num + sym
+    words = random.sample(merge, len(merge))
+    passwordString = passwordString.join(words)
+    print passwordString
+
+if (__name__ == "__main__" ):
+    main();
+
